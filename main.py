@@ -3,6 +3,7 @@ import json
 import asyncio
 import distutils
 import os
+import sys
 
 intents = discord.Intents.default()  # 標準設定から
 intents.typing = False  # typingは受け取らない
@@ -96,7 +97,7 @@ class my_Button_for_role_granting(discord.ui.Button):
         self.user_id = user_id
 
     async def callback(self, interaction: discord.Interaction):
-        print("Buttoncallback")
+        sys.stdout.write("Buttoncallback")
         if self.role_id == -1:
             await interaction.message.delete()
             return
@@ -119,7 +120,7 @@ class my_Button_for_role_auto_grant(discord.ui.Button):
         self.isroleautogranted = isroleautogranted
 
     async def callback(self, interaction: discord.Interaction):
-        print("Buttoncallback")
+        sys.stdout.write("Buttoncallback")
         with open('data.json', 'r') as f:
             json_dict = json.load(f)
         json_dict[str(interaction.guild_id)]["isroleautogranted"] = self.isroleautogranted
@@ -209,7 +210,7 @@ async def preset(ctx: discord.Interaction):
     if not ctx.user.guild_permissions.administrator:
         await ctx.response.send_message(f"実行する権限がありません",ephemeral = True)
         return
-    print("preset")
+    sys.stdout.write("preset")
     with open('data.json', 'r') as f:
         json_dict = json.load(f)
 
@@ -245,14 +246,14 @@ async def preset(ctx: discord.Interaction):
 
 @client.event  # 画像送信部分をこちらで代用
 async def on_message(message):
-    print("message")
+    sys.stdout.write("message")
     with open('data.json', 'r') as f:
         json_dict = json.load(f)
     if message.author.bot:
         return
     if message.channel.id == json_dict[str(message.guild.id)]["receive_channel"]:
         if len(message.attachments) == 1:
-            print("画像認識")
+            sys.stdout.write("画像認識")
             if distutils.util.strtobool(json_dict[str(message.guild.id)]["isroleautogranted"]):
                 for roleid in json_dict[str(message.guild.id)]["autoroles"].values():
                     await message.author.add_roles(message.guild.get_role(roleid))
@@ -305,9 +306,9 @@ async def claimrole(ctx:discord.Interaction, attachment: discord.Attachment):
 @client.event
 # clientの準備完了時に呼び出されるイベント
 async def on_ready():
-    print("ready")
+    sys.stdout.write("ready")
     await tree.sync(guild=guild)
     # await tree.sync()
-    print('ready')
+    sys.stdout.write('ready')
 
 client.run(TOKEN)
