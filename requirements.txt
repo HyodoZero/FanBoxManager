@@ -1,4 +1,3 @@
-discord.app_commands
 discord
 json
 asyncio

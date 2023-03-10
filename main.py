@@ -1,4 +1,3 @@
-import discord.app_commands
 import discord
 import json
 import asyncio
