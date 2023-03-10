@@ -2,7 +2,7 @@ import discord
 import json
 import asyncio
 import distutils
-
+import os
 
 intents = discord.Intents.default()  # 標準設定から
 intents.typing = False  # typingは受け取らない
@@ -12,7 +12,7 @@ intents.members = True
 guild = discord.Object(1082464517025431692)
 
 client = discord.Client(intents=intents)
-TOKEN = "MTA4MjU4ODI1MzU1Njg0NjYzMg.GDsGMV.4Da4uPra3tMqC2O-QCt4c7ITQlpYxtPdGoA6Wk"
+TOKEN = os.environ.get("DISCORD_TOKEN")
 tree = discord.app_commands.CommandTree(client)
 
 ######### 設定用のクラス設定 ##########
@@ -22,7 +22,7 @@ class RoleSelectViewForSetting(discord.ui.View):
         placeholder="ロールを選択してください"
     )
     async def roleselectMenu(self, ctx: discord.Interaction, roleselect: discord.ui.RoleSelect):
-        with open('FanBoxManager/data.json', 'r') as f:
+        with open('data.json', 'r') as f:
             json_dict = json.load(f)
         json_dict[str(ctx.guild_id)]["roles"] = {}
         rolelist = []
@@ -33,7 +33,7 @@ class RoleSelectViewForSetting(discord.ui.View):
         await ctx.response.edit_message(view=self)
         embed = discord.Embed(color = 0x00ff00, title= "設定完了", description="以下のロールを付与できるようになりました。\n" + '\n'.join(rolelist))
         await ctx.followup.send(embed=embed,ephemeral=True)
-        with open("FanBoxManager/data.json", "w") as f:
+        with open("data.json", "w") as f:
             json.dump(json_dict, f, ensure_ascii=False)
 
 class AutoRoleSelectViewForSetting(discord.ui.View):
@@ -42,7 +42,7 @@ class AutoRoleSelectViewForSetting(discord.ui.View):
         placeholder="ロールを選択してください"
     )
     async def roleselectMenu(self, ctx: discord.Interaction, roleselect: discord.ui.RoleSelect):
-        with open('FanBoxManager/data.json', 'r') as f:
+        with open('data.json', 'r') as f:
             json_dict = json.load(f)
         json_dict[str(ctx.guild_id)]["autoroles"] = {}
         rolelist = []
@@ -53,7 +53,7 @@ class AutoRoleSelectViewForSetting(discord.ui.View):
         await ctx.response.edit_message(view=self)
         embed = discord.Embed(color = 0x00ff00, title= "設定完了", description="以下のロールを自動で付与します。\n" + '\n'.join(rolelist))
         await ctx.followup.send(embed=embed,ephemeral=True)
-        with open("FanBoxManager/data.json", "w") as f:
+        with open("data.json", "w") as f:
             json.dump(json_dict, f, ensure_ascii=False)
 
 class ChannelSelectViewForReceiveSetting(discord.ui.View):
@@ -62,13 +62,13 @@ class ChannelSelectViewForReceiveSetting(discord.ui.View):
         placeholder="チャンネルを選択してください"
     )
     async def receivechannelselectMenu(self, ctx: discord.Interaction, channelselect: discord.ui.ChannelSelect):
-        with open('FanBoxManager/data.json', 'r') as f:
+        with open('data.json', 'r') as f:
             json_dict = json.load(f)
         json_dict[str(ctx.guild_id)
                   ]["receive_channel"] = channelselect.values[0].id
         await ctx.response.send_message("設定しました。", delete_after=5)
         await ctx.guild.get_channel(channelselect.values[0].id).send("画像送信用チャンネルに設定されました。", delete_after=5)
-        with open("FanBoxManager/data.json", "w") as f:
+        with open("data.json", "w") as f:
             json.dump(json_dict, f, ensure_ascii=False)
         await asyncio.sleep(5)
         await ctx.followup.delete_message(ctx.message.id)
@@ -79,12 +79,12 @@ class ChannelSelectViewForBotSetting(discord.ui.View):
         placeholder="チャンネルを選択してください"
     )
     async def botchannelselectMenu(self, ctx: discord.Interaction, channelselect: discord.ui.ChannelSelect):
-        with open('FanBoxManager/data.json', 'r') as f:
+        with open('data.json', 'r') as f:
             json_dict = json.load(f)
         json_dict[str(ctx.guild_id)]["bot_channel"] = channelselect.values[0].id
         await ctx.response.send_message("設定しました。", delete_after=5)
         await ctx.guild.get_channel(channelselect.values[0].id).send("画像確認用チャンネルに設定されました。", delete_after=5)
-        with open("FanBoxManager/data.json", "w") as f:
+        with open("data.json", "w") as f:
             json.dump(json_dict, f, ensure_ascii=False)
         await asyncio.sleep(5)
         await ctx.followup.delete_message(ctx.message.id)
@@ -120,12 +120,12 @@ class my_Button_for_role_auto_grant(discord.ui.Button):
 
     async def callback(self, interaction: discord.Interaction):
         print("Buttoncallback")
-        with open('FanBoxManager/data.json', 'r') as f:
+        with open('data.json', 'r') as f:
             json_dict = json.load(f)
         json_dict[str(interaction.guild_id)]["isroleautogranted"] = self.isroleautogranted
         await interaction.response.send_message("設定しました", ephemeral=True, delete_after=5)
         await interaction.followup.delete_message(interaction.message.id)
-        with open("FanBoxManager/data.json", "w") as f:
+        with open("data.json", "w") as f:
             json.dump(json_dict, f, ensure_ascii=False)
         
 ####################################
@@ -210,7 +210,7 @@ async def preset(ctx: discord.Interaction):
         await ctx.response.send_message(f"実行する権限がありません",ephemeral = True)
         return
     print("preset")
-    with open('FanBoxManager/data.json', 'r') as f:
+    with open('data.json', 'r') as f:
         json_dict = json.load(f)
 
     json_dict[str(ctx.guild_id)] = {"admin": ctx.user.id, "bot_channel": 0, "receive_channel": 0, "roles": {
@@ -228,7 +228,7 @@ async def preset(ctx: discord.Interaction):
         receive_channel = await ctx.guild.create_text_channel(name="権限付与チャンネル")
         json_dict[str(ctx.guild_id)]["receive_channel"] = receive_channel.id
 
-    with open("FanBoxManager/data.json", "w") as f:
+    with open("data.json", "w") as f:
         json.dump(json_dict, f, ensure_ascii=False)
 
     embed = discord.Embed(color=0x00ff00, title="初期設定完了",
@@ -246,7 +246,7 @@ async def preset(ctx: discord.Interaction):
 @client.event  # 画像送信部分をこちらで代用
 async def on_message(message):
     print("message")
-    with open('FanBoxManager/data.json', 'r') as f:
+    with open('data.json', 'r') as f:
         json_dict = json.load(f)
     if message.author.bot:
         return
@@ -283,7 +283,7 @@ async def on_message(message):
 )
 async def claimrole(ctx:discord.Interaction, attachment: discord.Attachment):
     image = await attachment.to_file(filename="image.png")
-    with open('FanBoxManager/data.json', 'r') as f:
+    with open('data.json', 'r') as f:
         json_dict = json.load(f)
         await ctx.response.defer(ephemeral=True)
         bot_channel = await ctx.guild.fetch_channel(json_dict[str(ctx.guild_id)]["bot_channel"])
