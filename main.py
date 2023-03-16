@@ -191,7 +191,8 @@ try:
         password=MYSQLPASSWORD,  # パスワード
         host=MYSQLHOST,  # ホスト名(IPアドレス）
         database=MYSQLDATABASE,  # データベース
-        port = MYSQLPORT
+        port = MYSQLPORT,
+        auth_plugin='mysql_native_password'
     )
 
     if cnx.is_connected:
