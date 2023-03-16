@@ -1,7 +1,6 @@
 import discord
 import json
 import asyncio
-import distutils
 import os
 import sys
 import typing
@@ -329,7 +328,7 @@ async def on_message(message):
     if message.channel.id == dict["receive_channel_id"]:
         if len(message.attachments) == 1:
             sys.stdout.write("画像認識")
-            if distutils.util.strtobool(dict["autorole"]):
+            if dict["autorole"] == "True":
                 for roleid in dict["autoroles_id"].values():
                     await message.author.add_roles(message.guild.get_role(roleid))
                 await message.add_reaction('\N{THUMBS UP SIGN}')
