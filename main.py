@@ -175,8 +175,10 @@ def dict_to_mysql(cursor: mysql.connector.cursor.MySQLCursor, dict: dict):
 guild = discord.Object(1082464517025431692)
 
 client = discord.Client(intents=intents)
-MYSQL_USER = os.environ.get("MYSQL_USER")
-MYSQL_PASSWORD = os.environ.get("MYSQL_PASSWORD")
+MYSQLUSER = os.environ.get("MYSQLUSER")
+MYSQLPASSWORD = os.environ.get("MYSQLPASSWORD")
+MYSQLHOST = os.environ.get("MYSQLHOST")
+MYSQLDATABASE = os.environ.get("MYSQLDATABASE")
 TOKEN = os.environ.get("DISCORD_TOKEN")
 tree = discord.app_commands.CommandTree(client)
 cnx = None
@@ -184,10 +186,10 @@ cursor = None
 
 try:
     cnx = mysql.connector.connect(
-        user=MYSQL_USER,  # ユーザー名
-        password=MYSQL_PASSWORD,  # パスワード
-        host='localhost',  # ホスト名(IPアドレス）
-        database="fanboxmanager"  # データベース
+        user=MYSQLUSER,  # ユーザー名
+        password=MYSQLPASSWORD,  # パスワード
+        host=MYSQLHOST,  # ホスト名(IPアドレス）
+        database=MYSQLDATABASE  # データベース
     )
 
     if cnx.is_connected:
