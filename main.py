@@ -170,9 +170,6 @@ def dict_to_mysql(cursor: mysql.connector.cursor.MySQLCursor, dict: dict):
 
 #####################################
 
-
-guild = discord.Object(1082464517025431692)
-
 client = discord.Client(intents=intents)
 MYSQLUSER = os.environ.get("MYSQLUSER")
 MYSQLPASSWORD = os.environ.get("MYSQLPASSWORD")
@@ -206,7 +203,7 @@ except Exception as e:
 @tree.command(
     name="setting_role",  # コマンド名
     description="付与ロールに関する設定を行います。",  # コマンドの説明
-    guild=guild
+    
 )
 async def setting_role(ctx: discord.Interaction):
     if not ctx.user.guild_permissions.administrator:
@@ -221,7 +218,7 @@ async def setting_role(ctx: discord.Interaction):
 @tree.command(
     name="setting_automatic_granting_role",  # コマンド名
     description="どのロールを自動付与するかを指定します。",  # コマンドの説明
-    guild=guild
+    
 )
 async def setting_auto_role(ctx: discord.Interaction):
     if not ctx.user.guild_permissions.administrator:
@@ -236,7 +233,7 @@ async def setting_auto_role(ctx: discord.Interaction):
 @tree.command(
     name="setting_receive_channel",  # コマンド名
     description="画像を受信するチャンネルに関する設定を行います。",  # コマンドの説明
-    guild=guild
+    
 )
 async def setting_receive_channel(ctx: discord.Interaction):
     if not ctx.user.guild_permissions.administrator:
@@ -250,7 +247,7 @@ async def setting_receive_channel(ctx: discord.Interaction):
 @tree.command(
     name="setting_bot_channel",  # コマンド名
     description="画像を確認するチャンネルに関する設定を行います。",  # コマンドの説明
-    guild=guild
+    
 )
 async def setting_bot_channel(ctx: discord.Interaction):
     if not ctx.user.guild_permissions.administrator:
@@ -264,7 +261,7 @@ async def setting_bot_channel(ctx: discord.Interaction):
 @tree.command(
     name="setting_automatic_granting",  # コマンド名
     description="ロールを自動付与するかどうかを設定します。",  # コマンドの説明
-    guild=guild
+    
 )
 async def setting_receive_channel(ctx: discord.Interaction):
     if not ctx.user.guild_permissions.administrator:
@@ -282,7 +279,7 @@ async def setting_receive_channel(ctx: discord.Interaction):
 @tree.command(
     name="preset",  # コマンド名
     description="設定を初期化します。",  # コマンドの説明
-    guild=guild
+    
 )
 async def preset(ctx: discord.Interaction):
     if not ctx.user.guild_permissions.administrator:
@@ -353,7 +350,7 @@ async def on_message(message):
 @tree.command(
     name="claimrole",#コマンド名
     description="支援情報を送信することでロールの付与を申請します。",#コマンドの説明
-    guild=guild
+    
 )
 async def claimrole(ctx:discord.Interaction, attachment: discord.Attachment):
     image = await attachment.to_file(filename="image.png")
@@ -377,7 +374,7 @@ async def claimrole(ctx:discord.Interaction, attachment: discord.Attachment):
 # clientの準備完了時に呼び出されるイベント
 async def on_ready():
     sys.stdout.write("ready")
-    await tree.sync(guild=guild)
+    await tree.sync()
     # await tree.sync()
     sys.stdout.write('ready')
 client.run(TOKEN)
