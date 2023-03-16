@@ -179,6 +179,7 @@ MYSQLUSER = os.environ.get("MYSQLUSER")
 MYSQLPASSWORD = os.environ.get("MYSQLPASSWORD")
 MYSQLHOST = os.environ.get("MYSQLHOST")
 MYSQLDATABASE = os.environ.get("MYSQLDATABASE")
+MYSQLPORT = os.environ.get("MYSQLPORT")
 TOKEN = os.environ.get("DISCORD_TOKEN")
 tree = discord.app_commands.CommandTree(client)
 cnx = None
@@ -189,7 +190,8 @@ try:
         user=MYSQLUSER,  # ユーザー名
         password=MYSQLPASSWORD,  # パスワード
         host=MYSQLHOST,  # ホスト名(IPアドレス）
-        database=MYSQLDATABASE  # データベース
+        database=MYSQLDATABASE,  # データベース
+        port = MYSQLPORT
     )
 
     if cnx.is_connected:
