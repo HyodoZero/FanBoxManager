@@ -175,10 +175,9 @@ def dict_to_mysql(cursor: mysql.connector.cursor.MySQLCursor, dict: dict):
 guild = discord.Object(1082464517025431692)
 
 client = discord.Client(intents=intents)
-TOKEN = "MTA4MjU4ODI1MzU1Njg0NjYzMg.Gt0BSm.AWS5NlbV71aKuNa5Jo19dHDU25zIC81DvaBHgc"
-MYSQL_USER = "root"
-MYSQL_PASSWORD = "YKK2002mysql"
-# TOKEN = os.environ.get("DISCORD_TOKEN")
+MYSQL_USER = os.environ.get("MYSQL_USER")
+MYSQL_PASSWORD = os.environ.get("MYSQL_PASSWORD")
+TOKEN = os.environ.get("DISCORD_TOKEN")
 tree = discord.app_commands.CommandTree(client)
 cnx = None
 cursor = None
