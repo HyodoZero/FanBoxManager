@@ -159,7 +159,7 @@ def mysql_to_dict_by_guild_id(cursor: mysql.connector.cursor.MySQLCursor, guild_
 def dict_to_mysql(cursor: mysql.connector.cursor.MySQLCursor, dict: dict):
     for key in dict.keys():
         if isinstance(dict[key],typing.Dict):
-            dict[key] = json.dumps(dict[key])
+            dict[key] = json.dumps(dict[key],ensure_ascii=False)
     query_value = ', '.join(map(lambda s: str(s) if isinstance(s, int) else '\'' + str(s) + '\'', dict.values())).rstrip(',')
     key_value = ', '.join(dict.keys()).rstrip(',')
     update_value = ','.join(map(lambda key, value: str(key) + '=' + str(value) if isinstance(value, int) else str(key) + '=\'' + str(value) + '\'', dict.keys(),dict.values())).rstrip(',')
