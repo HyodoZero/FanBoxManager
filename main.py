@@ -275,6 +275,29 @@ async def setting_receive_channel(ctx: discord.Interaction):
     embed1 = discord.Embed(title="ロールの自動付与のONOFF")
     await ctx.response.send_message(view=view, embed=embed1, ephemeral=True)
 
+@tree.command(
+    name="setting_preview",  # コマンド名
+    description="現在の設定を確認します。",  # コマンドの説明
+    
+)
+async def setting_preview(ctx: discord.Interaction):
+    if not ctx.user.guild_permissions.administrator:
+        await ctx.response.send_message(f"実行する権限がありません", ephemeral=True)
+        return
+    dict = mysql_to_dict_by_guild_id(cursor, str(ctx.guild_id))
+    bot_channel = ctx.guild.get_channel(dict["bot_channel_id"])
+    receive_channel = ctx.guild.get_channel(dict["receive_channel_id"])
+    roles = dict["roles_id"].keys()
+    autorole = "有効" if dict["autorole"] == "True" else "無効"
+    autoroles = dict["autoroles_id"].keys()
+    embed = discord.Embed(color=0x00ff00, title="設定の一覧", description="このサーバーにおける現在の設定です。")
+    embed.add_field(name="画像検知チャンネル",value=receive_channel.name,inline=False)
+    embed.add_field(name="認証チャンネル",value=bot_channel.name,inline=False)
+    embed.add_field(name="付与できるロール一覧",value=",".join(roles),inline=False)
+    embed.add_field(name="ロールの自動付与",value=autorole,inline=False)
+    embed.add_field(name="自動付与されるロール一覧",value=",".join(autoroles),inline=False)
+    await ctx.response.send_message(embed=embed, ephemeral=True)
+
 
 @tree.command(
     name="preset",  # コマンド名
