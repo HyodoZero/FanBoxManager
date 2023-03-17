@@ -101,8 +101,12 @@ class my_Button_for_role_granting(discord.ui.Button):
             return
         member = interaction.guild.get_member(self.user_id)
         role = interaction.guild.get_role(self.role_id)
-        await member.add_roles(role)
-        await interaction.response.send_message(f"{role.name}を付与しました", ephemeral=True, delete_after=5)
+        try:
+            await member.add_roles(role)
+            await interaction.response.send_message(f"{role.name}を付与しました", ephemeral=True, delete_after=5)
+        except discord.errors.Forbidden as error:
+            embed = discord.Embed(color = 0xff0000, title= "問題発生", description=f"以下の設定を確認してください。\n・「サーバー設定」→「ロール」を開く。\n・ロールの順序を入れ替え、「RoleManager」が操作したいロールよりも上にあるようにする。")
+            await interaction.response.send_message(embed = embed, ephemeral=True)
 
         # embed = discord.Embed(color = 0x00ff00, title = "ロール付与のお知らせ",description=f"お待たせしました。\n**{role.name}**が付与されました。")
         # embed.set_author(name="FanBoxManager")
@@ -341,7 +345,7 @@ async def preset(ctx: discord.Interaction):
 
 
 @client.event  # 画像送信部分をこちらで代用
-async def on_message(message):
+async def on_message(message:discord.message):
     if message.author.bot:
         return
     dict = mysql_to_dict_by_guild_id(cursor,message.guild.id)
@@ -349,9 +353,14 @@ async def on_message(message):
         if len(message.attachments) == 1:
             sys.stdout.write("画像認識")
             if dict["autorole"] == "True":
-                for roleid in dict["autoroles_id"].values():
-                    await message.author.add_roles(message.guild.get_role(roleid))
-                await message.add_reaction('\N{THUMBS UP SIGN}')
+                try:
+                    for roleid in dict["autoroles_id"].values():
+                        await message.author.add_roles(message.guild.get_role(roleid))
+                    await message.add_reaction('\N{THUMBS UP SIGN}')
+                except discord.errors.Forbidden as error:
+                    embed = discord.Embed(color = 0xff0000, title= "問題発生", description=f"以下の設定を確認してください。\n・「サーバー設定」→「ロール」を開く。\n・ロールの順序を入れ替え、「RoleManager」が操作したいロールよりも上にあるようにする。")
+                    bot_channel = message.guild.get_channel(dict["bot_channel_id"])
+                    await bot_channel.send(embed=embed)
             else:
                 image = await message.attachments[0].to_file(filename="image.png")
                 bot_channel = message.guild.get_channel(dict["bot_channel_id"])
