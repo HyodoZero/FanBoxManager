@@ -381,6 +381,28 @@ async def on_message(message:discord.message):
                 await message.add_reaction('\N{THUMBS UP SIGN}')
 
 
+@tree.command(
+    name="help",#コマンド名
+    description="このbotの使い方です。",#コマンドの説明
+    )
+async def help(ctx:discord.Interaction):
+    if not ctx.user.guild_permissions.manage_roles:
+        await ctx.response.send_message(f"実行する権限がありません",ephemeral = True)
+        return
+    embed = discord.Embed(color = 0x000000, title= "How to use", description=f"FanBoxManagerについて解説します。")
+    embed.add_field(name="概要",value="このbotは、Fanboxの運営をDiscordを用いて行うクリエイターをサポートするために開発されました。\nこのbotの設定は全て、\"/\"から始まるコマンドを入力することで実行されます。",inline=False)
+    embed.add_field(name="使う前に",value="このbotを利用する前に、ロールの順位を設定する必要があります。\n・「サーバー設定」→「ロール」を開く。\n・ロールの順序を入れ替え、「RoleManager」が操作したいロールよりも上にあるようにする。",inline=False)
+    embed.add_field(name="動作の概要",value="このbotでは、主に以下のようにして、支援者から送られた支援情報を元にしてロールを付与します。\n1.支援者が特定のチャンネルに支援情報の画像を送信します。\n2.送信された画像と共に、ロールを付与できるボタンが、特定のチャンネルに送信される。ボタンを押すと、支援者にロールが付与される。",inline=False)
+    embed.add_field(name="コマンド一覧",value="以下はこのbotで利用可能なコマンドです。",inline=False)
+    embed.add_field(name="/setting_role",value="このコマンドは、支援者に付与できるロールを設定します。\nこのコマンドで選んだロールが実際に付与可能になります。",inline=False)
+    embed.add_field(name="/setting_receive_channel",value="このコマンドは、支援情報を支援者が送信できるチャンネルを設定します。\n設定したチャンネルを支援者が閲覧できることを確認してください。",inline=False)
+    embed.add_field(name="/setting_bot_channel",value="このコマンドは、支援情報を実際に確認し、ロールを付与するチャンネルを設定します。\n設定したチャンネルを支援者は閲覧できないように、権限を設定することを推奨します。",inline=False)
+    embed.add_field(name="/preset",value="このコマンドは設定を初期化します。\nまた、『権限付与チャンネル』と『確認チャンネル』が作成されます。\nこちらのチャンネルをそのまま利用することも、設定コマンドを使って他のチャンネルを利用することもできます。",inline=False)
+    embed.add_field(name="/setting_preview",value="このコマンドは、現在の設定を一覧で表示します。",inline=False)
+    embed.add_field(name="/setting_automatic_granting",value="このコマンドは、ロールの自動付与に関する設定を行います。\nONにすると、支援情報を送信された時、特定のロールを自動で付与できます。\n標準設定ではOFFです。",inline=False)
+    embed.add_field(name="/setting_automatic_granting",value="このコマンドは、自動付与されるロールに関する設定を行います。\nここで選択したロールが自動で付与されます。",inline=False)
+    await ctx.response.send_message(embed=embed,ephemeral = True)
+
 '''
 @tree.command(
     name="claimrole",#コマンド名
@@ -409,6 +431,11 @@ async def loop():
     # botが起動するまで待つ
     await client.wait_until_ready()
     cursor.execute("SELECT 1")
+
+@client.event
+async def on_guild_join(guild):
+    dict = {"admin_id": 0, "guild_id": guild.id, "bot_channel_id": 0,"receive_channel_id": 0, "roles_id": {}, "autorole": "False", "autoroles_id": "{}"}
+    dict_to_mysql(dict)
 
 @client.event
 # clientの準備完了時に呼び出されるイベント
