@@ -5,6 +5,7 @@ import os
 import sys
 import typing
 import mysql.connector
+from discord.ext import tasks
 
 intents = discord.Intents.default()  # 標準設定から
 intents.typing = False  # typingは受け取らない
@@ -403,7 +404,7 @@ async def claimrole(ctx:discord.Interaction, attachment: discord.Attachment):
     await ctx.followup.send("受け取りました。\nロール付与まで少々お待ちください。",ephemeral=True)
 '''
 # MySQLのタイムアウト防止、1時間に1度SELECT 1を送る
-@discord.ext.tasks.loop(seconds=3600)
+@tasks.loop(seconds=3600)
 async def loop():
     # botが起動するまで待つ
     await client.wait_until_ready()
