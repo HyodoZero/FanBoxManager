@@ -402,7 +402,12 @@ async def claimrole(ctx:discord.Interaction, attachment: discord.Attachment):
         await bot_channel.send(file = image, embed = embed, view = components)
     await ctx.followup.send("受け取りました。\nロール付与まで少々お待ちください。",ephemeral=True)
 '''
-
+# MySQLのタイムアウト防止、1時間に1度SELECT 1を送る
+@discord.ext.tasks.loop(seconds=3600)
+async def loop():
+    # botが起動するまで待つ
+    await client.wait_until_ready()
+    cursor.execute("SELECT 1")
 
 @client.event
 # clientの準備完了時に呼び出されるイベント
