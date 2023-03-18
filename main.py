@@ -184,7 +184,7 @@ MYSQLPORT = os.environ.get("MYSQLPORT")
 TOKEN = os.environ.get("DISCORD_TOKEN")
 tree = discord.app_commands.CommandTree(client)
 cnx = None
-cursor = None
+cursor:mysql.connector.cursor.MySQLCursor = None
 
 try:
     cnx = mysql.connector.connect(
@@ -435,7 +435,7 @@ async def loop():
 @client.event
 async def on_guild_join(guild):
     dict = {"admin_id": 0, "guild_id": guild.id, "bot_channel_id": 0,"receive_channel_id": 0, "roles_id": {}, "autorole": "False", "autoroles_id": "{}"}
-    dict_to_mysql(dict)
+    dict_to_mysql(cursor,dict)
 
 @client.event
 # clientの準備完了時に呼び出されるイベント
